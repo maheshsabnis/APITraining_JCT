@@ -1,3 +1,6 @@
+// 1. WebAppliationBuilder clas
+    // Hosting COnfiguration
+    // Kestral Hosting COnfigurations
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

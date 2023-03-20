@@ -1,0 +1,45 @@
+# dotnet runtime
+	- Microsoft.NetCore.App
+		- .NET 6 App Hosting
+		- dotnet.exe
+		- runtime configration json file
+			- COntanins list of all pcakages required to execute current application
+	- Microsoft.AspNetCore.App
+		- ASP.NET Core runtime  
+			- Http Request Processing
+			- Services
+				- DI
+			- Middlewares
+			- COntrollers
+				- MVC
+				- API
+			- Razor Views
+			- ..... all those packages needed to execute Web Apps
+# ASP.NET
+- Program.cs
+	- WebApplication class for Defautl Hosting with following Offerings
+		- Services
+			- builder.Services
+				- IServiceCollection, interface that represents 'Dependency Injection Container'
+				- ServiceDescriptor, is the class thst is responsible for registering all dependencies in container. It also decides the Lifetime of all dependencies
+					- Singeton
+					- Scoped
+					- Transient
+			- Security
+			- Identity
+			- Session
+			- Cache
+			- CORS
+			- Custom Required Services
+			- THird Party Services
+			- builder.Services.AddControllers();
+				- Service for API Controllers
+			- builder.Services.AddControllerWithViews();
+				- MVC + API
+			- builder.Services.AddRazorPages()
+				- Razor Veiws
+		- Middlewares
+			- builder.Build()
+- appsettings.json
+	- Application COnfig. file
+- Controllers Folder
