@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core_API.Models
 {
-    public partial class Department
+    public partial class Department : EntityBase
     {
         public Department()
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core_API.Models
 {
-    public partial class Employee
+    public partial class Employee : EntityBase
     {
         public int EmpNo { get; set; }
         public string EmpName { get; set; } = null!;

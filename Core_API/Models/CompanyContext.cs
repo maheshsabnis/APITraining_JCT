@@ -7,9 +7,9 @@ namespace Core_API.Models
 {
     public partial class CompanyContext : DbContext
     {
-        public CompanyContext()
-        {
-        }
+        //public CompanyContext()
+        //{
+        //}
 
         public CompanyContext(DbContextOptions<CompanyContext> options)
             : base(options)
