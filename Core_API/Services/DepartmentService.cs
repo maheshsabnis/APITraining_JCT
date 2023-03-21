@@ -37,7 +37,7 @@ namespace Core_API.Services
            var depts =  await _context.Departments.ToListAsync();
 
             var result = (from d in depts
-                          select new  
+                          select new Department()
                           {
                               DeptNo = d.DeptNo,
                               DeptName = d.DeptName,
