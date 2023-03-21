@@ -18,7 +18,7 @@ builder.Services.AddDbContext<CompanyContext>(options =>
 // Register the DepartmentService and EmployeeService in DI COntaienr
 
 builder.Services.AddScoped<IService<Department,int>, DepartmentService>();
-
+builder.Services.AddScoped<IService<Employee, int>, EmployeeService>();
 
 // Add services to the container aka DI Container.
 
