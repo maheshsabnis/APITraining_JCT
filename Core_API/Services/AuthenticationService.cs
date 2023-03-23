@@ -1,89 +1,83 @@
 ﻿using Core_API.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Runtime.CompilerServices;
 
 namespace Core_API.Services
 {
-    /// <summary>
-    /// This class will contain Methods to Create and Autehnticate USers
-    /// as well as create roles and add user to role
-    /// </summary>
     public class AuthenticationService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        UserManager<IdentityUser> _userManager;
+        RoleManager<IdentityRole> _roleManager;
+        SignInManager<IdentityUser> _signInManager;
 
-        public AuthenticationService(UserManager<IdentityUser> userManager,SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public AuthenticationService(RoleManager<IdentityRole> roleManager, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
-            _signInManager = signInManager;
-
             _roleManager = roleManager;
+
+            _signInManager = signInManager;
 
             _userManager = userManager;
         }
-
+        /// <summary>
+        /// THis method is used to register new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<bool> CreateNewUserAsync(RegisterUser user)
         {
-            var identityUser = new IdentityUser() 
+            // STore the RegisterUser data in IdentityUser class
+            IdentityUser identityUser = new IdentityUser()
             {
-               Email = user.UserName,
-               UserName = user.UserName
+                 Email = user.UserName,
+                 UserName = user.UserName
             };
-
-            // This methdo will Auto-has the password
+            // CReate new User
             var result = await _userManager.CreateAsync(identityUser, user.Password);
-
-            if(result.Succeeded) return true;
+            if(result.Succeeded) return true;   
             return false;
         }
-
-
-        public async Task<bool> AuthenticateUser(LoginUser user)
+        /// <summary>
+        /// Method to Authenticate the user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<bool> AuthenticateAsync(LoginUser user)
         {
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password, false, true);
-            
-            if (result.Succeeded) return true;
-            return false;
+            // authenticate user based on username and password
+            // the third parameter is false because no cookie will be created
+            // the fourth parameter will be used for lockout the user
+            // for 3 invalid login attempts
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password,false,true);
+            return result.Succeeded;
         }
 
         public async Task<bool> CreateNewRoleAsync(IdentityRole role)
-        {
+        { 
             var result = await _roleManager.CreateAsync(role);
-            if (result.Succeeded) return true;
-            return false;
+            return result.Succeeded;
         }
 
-        public async Task<ResponseObject> AssignRoleToUserAsync(string userName, string roleName)
-        {
-            ResponseObject response = new ResponseObject();
-
-            // 1. Check if role exist
-            var IsRoleExist = await _roleManager.RoleExistsAsync(roleName);
-            if (!IsRoleExist)
+        public async Task<string> AddUserToRoleAsync(string rolename, string username)
+        { 
+            // 1. check role exist
+            var IsRoleExist = await _roleManager.RoleExistsAsync(rolename);
+            if (!IsRoleExist) 
             {
-                response.Message = $"Role with name {roleName} does not exist";
-                return response;
+                return $"Role with Name {rolename} does nt exist";
+            }
+            // 2. check user exist
+            IdentityUser user = await _userManager.FindByNameAsync(username);
+            if (user == null) 
+            {
+                return $"USer with name {username} does not exist";
             }
 
-            // 2. Check if User Exists
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
-            {
-                response.Message = $"User with name {userName} does not exist";
-                return response;
-            }
+            // 3. Assign Role to User
+            var result = await _userManager.AddToRoleAsync(user,rolename);
+            if (result.Succeeded)
+                return $"Role {rolename} is successfully assigned to user {username}";
 
-            var result = await _userManager.AddToRoleAsync(user, roleName);
-            if (result.Succeeded) 
-            {
-                response.Message = $"User with name {userName} is added to role with name {roleName}";
-                return response;
-            }
-            response.Message = $"Some Error has occured while adding  user {userName} to role {roleName}";
-
-            return response;
-
+            return $"Role {rolename} can ot be assigned to user {username}"; 
         }
+
     }
 }

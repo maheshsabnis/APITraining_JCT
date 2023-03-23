@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core_API.Migrations
 {
     [DbContext(typeof(JCISecurityDbContext))]
-    [Migration("20230323065048_firstMigration")]
+    [Migration("20230323090629_firstMigration")]
     partial class firstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

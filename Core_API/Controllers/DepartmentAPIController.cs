@@ -16,7 +16,7 @@ namespace Core_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Lets Secure the Department COntroller
+   // [Authorize] // Lets Secure the Department COntroller
     public class DepartmentAPIController : ControllerBase
     {
         private readonly IService<Department, int> deptServ;
@@ -31,6 +31,7 @@ namespace Core_API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="Manager,Clerk,Operator")] // AUthorization BAsed on Roles
         public async Task<IActionResult> Get() 
         {
             var result = await deptServ.GetAsync();
@@ -42,6 +43,7 @@ namespace Core_API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Manager,Clerk,Operator")]
         public async Task<IActionResult> Get(int id)
         {
             var dept =  await deptServ.GetAsync(id);
@@ -49,6 +51,7 @@ namespace Core_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Manager,Clerk")]
         public async Task<IActionResult> Post(Department dept)
         {
             //try
@@ -67,6 +70,7 @@ namespace Core_API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Put(int id, Department dept)
         {
             var result = await deptServ.UpdateAsync(id,dept);
@@ -74,6 +78,7 @@ namespace Core_API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(int id)
         {
               await deptServ.DeleteAsync(id);

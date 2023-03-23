@@ -10,58 +10,45 @@ namespace Core_API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AuthenticationService _authServ;
-        public AuthController(AuthenticationService authServ)
-        {
-            _authServ = authServ;
-        }
+        AuthenticationService service;
 
+        public AuthController(AuthenticationService service)
+        {
+            this.service = service;
+        }
 
         [HttpPost]
         [ActionName("register")]
-        public async Task<IActionResult> Register(RegisterUser user)
+        public async Task<IActionResult> CreateUserAsync(RegisterUser user)
         { 
-            var response = await _authServ.CreateNewUserAsync(user);
-            if (response)
-            {
-                return Ok($"User {user.UserName} is created successfully");
-            }
-            return BadRequest("User Creation Failed");
+            var response = await service.CreateNewUserAsync(user);
+            return Ok(response);
         }
-
 
         [HttpPost]
         [ActionName("login")]
-        public async Task<IActionResult> Login(LoginUser user)
+        public async Task<IActionResult> AuthenticateUserAsync(LoginUser user)
         {
-            var response = await _authServ.AuthenticateUser(user);
-            if (response)
-            {
-                return Ok($"User {user.UserName} is loggied in successfully");
-            }
-            return BadRequest("User Login Failed");
+            var response = await service.AuthenticateAsync(user);
+            return Ok(response);
         }
-
 
         [HttpPost]
         [ActionName("role")]
-        public async Task<IActionResult> CreateRole(IdentityRole role)
+        public async Task<IActionResult> CreateRoleAsync(IdentityRole role)
         {
-            var response = await _authServ.CreateNewRoleAsync(role);
-            if (response)
-            {
-                return Ok($"User {role.Name} is created successfully");
-            }
-            return BadRequest("Role Creation Failed");
+            var response = await service.CreateNewRoleAsync(role);
+            return Ok(response);
         }
 
         [HttpPost]
-        [ActionName("roleuser")]
-        public async Task<IActionResult> AssignRoleToUser(string userName, string roleName)
+        [ActionName("roletouser")]
+        public async Task<IActionResult> AssgnRoleToUser(string rolename, string username)
         {
-            var response = await _authServ.AssignRoleToUserAsync(userName,roleName);
+            var response = await service.AddUserToRoleAsync(rolename,username);
             return Ok(response);
         }
+
 
     }
 }

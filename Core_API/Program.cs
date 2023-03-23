@@ -15,25 +15,26 @@ builder.Services.AddDbContext<CompanyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppConnStr"));
 });
-// REgister the Db COnnection Strng for Security Database
+
+
 builder.Services.AddDbContext<JCISecurityDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SecConnStr"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SecureConnStr"));
 });
 
-// Register Identity Classes
-// Regisyer following in DI
-// UserManager<IdentityUser>, RoleManager<IdentityRole>, SignInManager<IdentityUser>
+// REgister UserManager<IdentityUser>, RoleManager<IdentityRole>, and SignInManager<IdetityUser>
+// In DI COntainer
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<JCISecurityDbContext>(); // Use this DbContext and Hence DB Connection to Verify USerNAme, Password,and Role
-
+    .AddEntityFrameworkStores<JCISecurityDbContext>();
 
 
 // Register the DepartmentService and EmployeeService in DI COntaienr
 
 builder.Services.AddScoped<IService<Department,int>, DepartmentService>();
 builder.Services.AddScoped<IService<Employee, int>, EmployeeService>();
-// Register AUth Service in DI
+
+// register the AuthenticationSerice
+
 builder.Services.AddScoped<AuthenticationService>();
 
 // Add services to the container aka DI Container.
