@@ -43,3 +43,80 @@
 - appsettings.json
 	- Application COnfig. file
 - Controllers Folder
+
+# API Practies
+	- MAkes Sure that use suitable validations
+		- System.ComponentModel.DataAnnotations
+			- ValidationAttribute
+				- Abstract base class for validators
+				- IsValid() method
+					- return boolean
+			- RequiredAttribute()
+			- COmpareAttirbute()
+			- STringLenght()
+			- ... and mamy more
+	- Validators
+		- Annotation Validators
+			- Applied on Properties of ENtity class as either standard or by creating Custom Annotations
+		- Use Exception Handling		
+
+# Understanding Middlewares
+	- THey are HTTP Pipeline COmponents
+	- Value added objets to provide an execution to Http Request and Responses based on following
+		- Exceptions
+		- Https Redirection
+		- HSTS
+		- Routing
+		- CORS
+		- StaticFIles
+		- Caching
+		- AUthentication
+		- Authorization
+		- Custom
+	 - IApplicationBuilder Interface
+		- The 'UseMiddleware<T>()' extension Method
+		- THe 'T' is middleware class	
+			- THis class is COnstructor Injected with 'RequestDelegate' delegate
+					- public delegate  int DoWorkHandler(int x,int y);
+					- public int Add(int x,int y){...}n
+					- DoWorkHandler d = new DoWotkHandler(Add);
+					- d.Invoke(10,20); ||| d(10,20)
+			- public Task RequestDelegate(HttpContext context);
+			- THis class MUST have an async 'InvokeAsync(HttpContext context)>{....}'
+				- THis method will contain Logic for the MIddleware
+	- Create a class that will register the ustom Middleare class as ASP.NET COre Custom Middleware in HTTP Pipeline 
+		- THis will be a static class having an extension method for IAppicationBuilder and that will register T as custom middlewre using 'UseMIddleware()' extension method of IApplicationBuilder
+		
+# Security
+- Microsoft.AspNetCore.Identity
+	- USerManager<IdentityUSer>
+		- Creation of Users
+			- CreateUSerAsync() method
+		- Assign Role To User
+			- AddToRoleAsync()
+	- RoleManager<IdentityRole>
+		- Creation of Roles
+			- CreateAsync()
+	- SignInManager<IdentityUser>
+		- Manage USer's Login
+			- PasswordSignInAsync() 
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+	- IdentityDbContext : IdentityDbContext<IdentityUSer, IdentityRole, IdentityCliam>
+		- EF Core Code-First Approach to Create Identity Tables from Classes
+		- IdentityUser class -- AspNetUsers Table
+		- IdentityRole class --- AspNetRoles Table
+- The 'AddIdentity<IdentityUser,IdentityRole>()' service method to ENable the ASP.NET Identity for the Application
+	- builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStore<T>();
+		- T is the EF COre context class that mapes with the Database for ASP.NET Security 
+		- THis method will Register following classes in DI COntainer
+			- UserManager<IdentityUSer>,  RoleManager<IdentityRole>, and SignInManager<IdentityUser>
+			
+- THe 'AddAuthorization()'
+	- USed for DEfining Policies
+- The 'UseAuthentication()'
+	- USer and Roles based Login and Authentication
+- The 'UseAuthorization()'
+	- Roles and Tokens
+- THe 'AuthorizeAttribute' class
+	- APplied on Controller as well as on Methods
+

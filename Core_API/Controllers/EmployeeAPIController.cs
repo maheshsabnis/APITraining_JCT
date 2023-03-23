@@ -13,25 +13,28 @@ namespace Core_API.Controllers
     /// The Route URL will be
     /// https://[SERVER-NAME | HOST-NAME | IP-ADDRESS]:[PORT-NO]/api/EmployeeAPI
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class EmployeeAPIController : ControllerBase
     {
-        private readonly IService<Employee, int> deptServ;
+        private readonly IService<Employee, int> empServ;
+        private readonly IService<Department, int> deptServ;
 
         /// <summary>
         /// Injected the service 
         /// </summary>
         /// <param name="serv"></param>
-        public EmployeeAPIController(IService<Employee,int> serv)
+        public EmployeeAPIController(IService<Employee,int> serv, IService<Department, int> deptServ)
         {
-            deptServ = serv;
+            empServ = serv;
+            this.deptServ = deptServ;
+
         }
 
         [HttpGet]
         public async Task<IActionResult> Get() 
         {
-            var result = await deptServ.GetAsync();
+            var result = await empServ.GetAsync();
             return Ok(result);
         }
         /// <summary>
@@ -42,29 +45,66 @@ namespace Core_API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var dept =  await deptServ.GetAsync(id);
-            return Ok(dept);
+            var emp =  await empServ.GetAsync(id);
+            return Ok(emp);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Employee dept)
-        { 
-            var result = await deptServ.CreateAsync(dept);
-            return Ok(result);
+        public async Task<IActionResult> Post(Employee emp)
+        {
+            // Check for the Model Validation 
+            if (ModelState.IsValid)
+            {
+                var result = await empServ.CreateAsync(emp);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Employee dept)
+        public async Task<IActionResult> Put(int id, Employee emp)
         {
-            var result = await deptServ.UpdateAsync(id,dept);
+            var result = await empServ.UpdateAsync(id,emp);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-              await deptServ.DeleteAsync(id);
+              await empServ.DeleteAsync(id);
             return Ok("Delete Successful");
+        }
+
+
+        [HttpGet("{deptName}")]
+        [ActionName("getEmpsByDname")]
+        public async Task<IActionResult> ListEmployeesBydeptName(string deptName)
+        {
+            List<Employee> employees = new List<Employee>();
+
+            int dno = ((from d in await deptServ.GetAsync()
+                      where d.DeptName == deptName
+                      select d).FirstOrDefault()).DeptNo;
+            if (dno == 0)
+            {
+                return BadRequest($"Sorry the DeptName is not present in oour records");
+            }
+            
+            employees = (from e in await empServ.GetAsync()
+                        where e.DeptNo == dno
+                        select new Employee() 
+                        {
+                          EmpNo = e.EmpNo,
+                          EmpName = e.EmpName,
+                          Designation   = e.Designation,
+                          Salary = e.Salary,
+                          DeptNo = dno
+                        }).ToList();
+
+            return Ok(employees);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core_API.Models;
 using Core_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ namespace Core_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Lets Secure the Department COntroller
     public class DepartmentAPIController : ControllerBase
     {
         private readonly IService<Department, int> deptServ;
@@ -48,9 +50,20 @@ namespace Core_API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Post(Department dept)
-        { 
-            var result = await deptServ.CreateAsync(dept);
-            return Ok(result);
+        {
+            //try
+            //{
+                // Check if the Department ith same DeptNAme exist
+                var d = (await deptServ.GetAsync()).Where(v => v.DeptName.Trim() == dept.DeptName.Trim()).FirstOrDefault();
+                if (d != null)
+                    throw new Exception($"The Department with DeptNAme as  {dept.DeptName} is already exist");
+                var result = await deptServ.CreateAsync(dept);
+                return Ok(result);
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(ex.Message);
+            //}
         }
 
         [HttpPut("{id}")]
