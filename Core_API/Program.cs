@@ -2,6 +2,7 @@
 // Hosting COnfiguration
 // Kestral Hosting COnfigurations
 using Core_API.CustomMiddlewares;
+using Core_API.DefaultAdmin;
 using Core_API.Models;
 using Core_API.Services;
 using Microsoft.AspNetCore.Identity;
@@ -26,6 +27,27 @@ builder.Services.AddDbContext<JCISecurityDbContext>(options =>
 // In DI COntainer
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<JCISecurityDbContext>();
+// Define Authorization with Policies
+// THese will take multiple Roles in a single Policy
+// We can create multiple policies and a role can be present under multiple policies
+// 
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ReadPolicy", policy => 
+    {
+        policy.RequireRole("Manager","Clerk", "Operator");
+    });
+    options.AddPolicy("ReadCreateUpdatePolicy", policy =>
+    {
+        policy.RequireRole("Manager", "Clerk");
+    });
+    options.AddPolicy("ReadCreateUpdateDeletePolicy", policy =>
+    {
+        policy.RequireRole("Manager");
+    });
+});
+
 
 
 // Register the DepartmentService and EmployeeService in DI COntaienr
@@ -60,11 +82,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// CReate DEfaut AdministratorUSer and Role
+// Create an instance of ServiceProvider that will 
+// provide an access of Services (aka Class instance) register in DI COntainer
+IServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
+await GlobalOps.CreateApplicationAdministrator(serviceProvider);
+
+
 app.UseAuthentication(); // FOr Use BAsed Login
 app.UseAuthorization();
 
 // APply the Custom Exception MIddleware
 app.UseAppException();
+
+
+
 
 
 app.MapControllers();

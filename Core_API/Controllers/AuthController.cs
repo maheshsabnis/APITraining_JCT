@@ -1,5 +1,6 @@
 ﻿using Core_API.Models;
 using Core_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace Core_API.Controllers
 
         [HttpPost]
         [ActionName("role")]
+        [Authorize(Roles="Administrator")]
         public async Task<IActionResult> CreateRoleAsync(IdentityRole role)
         {
             var response = await service.CreateNewRoleAsync(role);
@@ -43,6 +45,7 @@ namespace Core_API.Controllers
 
         [HttpPost]
         [ActionName("roletouser")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AssgnRoleToUser(string rolename, string username)
         {
             var response = await service.AddUserToRoleAsync(rolename,username);
