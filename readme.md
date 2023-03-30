@@ -120,3 +120,52 @@
 - THe 'AuthorizeAttribute' class
 	- APplied on Controller as well as on Methods
 
+
+# Docker
+- Commands
+	- List all Images
+		- docker images
+	- List all Containers
+		- docker ps
+	- List all Running Containers
+		- docker ps -a
+	- Removing Container
+		- STop COntainer
+			- docker stop [CONTAINER-NAME] | [CONTAINER-ID]
+		- Remove Container
+			- docker rm [CONTAINER-NAME] | [CONTAINER-ID]
+	- Removing Image
+		- Make sure that the container hosting thie image must be stopped and removed
+		- Remove Image
+			- docker rmi [IMAGE-NAME]:[TAG] | [IMAGE-ID]
+	- Buid IMage
+		- dockerfile
+			- COnfiguration to Build the Image as follows
+				- Base Image
+				- Create Work Directory
+				- COpy Files
+				- Install Dependencies
+				- Expose Port
+				- BUild (Optional)
+				- Publish (Optional)
+				- Run COmmand
+		- .dockerignore
+			- Files to be excluded when COPY takes place
+	- RUn the image
+		- Build
+			- docker build . -t [IMAGE-NAME]:[TAG]
+				- [IMAGE-NAME]: MUST be always in lower case
+		- Run
+			- docker run -p [LOCAL-PORT]:[CONTAINER-PORT] --name [CONTAINER-NAME] [IMAGE-NAME]:[TAG]
+	- Distrubuting Image
+		- Create a Repsitory Subscription
+			- DOcker-Hub
+			- Azure Container Registry (ACR)
+			- Elastic Container Registry (ECR)
+		- Login on the REgistry
+			- docker login
+		- Tag te Local Image to Registry SUbscription Name (aka credential name aka username) 
+			- docker tag [LOCAL-IMAGE-NAME]:[TAG] [REPOSITORY-NAME]/[IMAGE-NAME]:[TAG]
+		- Push image to repository
+			- docker push [REPOSITORY-NAME]/[IMAGE-NAME]:[TAG]
+			
