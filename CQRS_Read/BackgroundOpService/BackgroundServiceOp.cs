@@ -1,6 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using CQRS_Read.Models;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Diagnostics;
+using System.Text;
 
 namespace CQRS_Read.BackgroundOpService
 {
@@ -106,14 +108,8 @@ namespace CQRS_Read.BackgroundOpService
         private void HandleReceivedMessage(string content)
         {
 
-            var MessageObject = new Message()
-            {
-                Order = new Order(),
-                TotalAmount = 0,
-                Advance = 0
-            };
-
-            var message = System.Text.Json.JsonSerializer.Deserialize<Message>(content);
+             
+            var message = System.Text.Json.JsonSerializer.Deserialize<ProductInfo>(content);
             Debug.WriteLine($"Received Messsage {content}");
         }
     }
